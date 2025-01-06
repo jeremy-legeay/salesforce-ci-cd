@@ -26,14 +26,14 @@ jobs:
 
       - name: Install Salesforce CLI and plugins
         run: |
-          npm install sfdx-cli --global
-          sfdx version
-          echo y | sfdx plugins:install sfdx-git-delta
+          npm install sf-cli --global
+          sf version
+          echo y | sf plugins:install sf-git-delta
 
-      - name: Clear cache and install sf scanner plugin
+      - name: Clear cache and install sfdx scanner plugin
         run: |
-          rm -rf ~/.local/share/sfdx
-          sfdx plugins:install @salesforce/sf-scanner
+          rm -rf ~/.local/share/sf
+          sf plugins:install @salesforce/sf-scanner
 
       - name: Read PR Body
         env:
