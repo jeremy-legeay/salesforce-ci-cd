@@ -28,7 +28,12 @@ jobs:
         run: |
           npm install sfdx-cli --global
           sfdx version
-          echo y | sfdx plugins:install sfdx-git-delta
+          sfdx plugins:install sfdx-git-delta
+          npm update @salesforce/sfdx-scanner
+
+      - name: Set Node.js flags for dynamic import
+        run: |
+          export NODE_OPTIONS=--experimental-specifier-resolution=node
 
       - name: Clear cache and install sfdx scanner plugin
         run: |
