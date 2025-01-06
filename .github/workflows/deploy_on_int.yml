@@ -28,7 +28,12 @@ jobs:
         run: |
           npm install sfdx-cli --global
           sfdx version
-          echo y | sfdx plugins:install sfdx-git-delta @salesforce/sfdx-scanner
+          echo y | sfdx plugins:install sfdx-git-delta
+
+      - name: Clear cache and install sfdx scanner plugin
+        run: |
+          rm -rf ~/.local/share/sfdx
+          sfdx plugins:install @salesforce/sfdx-scanner
 
       - name: Read PR Body
         env:
@@ -52,9 +57,9 @@ jobs:
 
       - name: Set correct environment variables
         run: |
-          export SF_LAZY_LOAD_MODULES=true
-          export SF_DISABLE_AUTOUPDATE=true
-          
+          echo "SF_LAZY_LOAD_MODULES=true" >> $GITHUB_ENV
+          echo "SF_DISABLE_AUTOUPDATE=true" >> $GITHUB_ENV
+
       - name: Scan code
         run: |
           cd changed-sources
