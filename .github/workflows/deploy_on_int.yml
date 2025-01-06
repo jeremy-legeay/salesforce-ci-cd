@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v4
         with:
-          node-version: '^18.18.0'
+          node-version: '20.x'
 
       - name: Check Node.js version
         run: node -v
@@ -28,6 +28,8 @@ jobs:
         run: |
           npm install sfdx-cli --global
           sfdx version
+          export SF_LAZY_LOAD_MODULES=true
+          export SF_DISABLE_AUTOUPDATE=true
           echo y | sfdx plugins:install sfdx-git-delta @salesforce/sfdx-scanner
 
       - name: Read PR Body
