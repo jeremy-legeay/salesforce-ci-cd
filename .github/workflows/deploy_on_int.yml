@@ -30,10 +30,10 @@ jobs:
           sfdx version
           echo y | sfdx plugins:install sfdx-git-delta
 
-      - name: Clear cache and install sfdx scanner plugin
+      - name: Clear cache and install sf scanner plugin
         run: |
           rm -rf ~/.local/share/sfdx
-          sfdx plugins:install @salesforce/sfdx-scanner
+          sfdx plugins:install @salesforce/sf-scanner
 
       - name: Read PR Body
         env:
