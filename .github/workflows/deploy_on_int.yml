@@ -32,7 +32,6 @@ jobs:
           echo "$HOME/sfdx/bin" >> $GITHUB_PATH
           export PATH=$PATH:$HOME/sfdx/bin
           sfdx version
-          echo y | sfdx plugins:install sfdx-git-delta @salesforce/sfdx-scanner
 
       - name: Read PR Body
         env:
