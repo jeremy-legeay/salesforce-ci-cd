@@ -26,13 +26,13 @@ jobs:
 
       - name: Install Salesforce CLI and plugins
         run: |
-          npm install sf-cli --global
-          sf version
-          echo y | sf plugins:install sf-git-delta
+          npm install --global @salesforce/cli
+          sf --version
+          echo y | sf plugins:install sfdx-git-delta
 
-      - name: Clear cache and install sfdx scanner plugin
+      - name: Clear cache and install sf scanner plugin
         run: |
-          rm -rf ~/.local/share/sf
+          rm -rf ~/.local/share/sfdx
           sf plugins:install @salesforce/sf-scanner
 
       - name: Read PR Body
@@ -44,16 +44,16 @@ jobs:
           TESTS=$(cat testsToRun.txt)
           echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
 
-      - name: Populate auth file with SFDX_URL
-        run: echo ${{ secrets.SFDX_INTEGRATION_URL }} > SFDX_INTEGRATION_URL.txt
+      - name: Populate auth file with SF_URL
+        run: echo ${{ secrets.SFDX_INTEGRATION_URL }} > SF_INTEGRATION_URL.txt
 
       - name: Authenticate to Integration Org
-        run: sfdx auth:sfdxurl:store -f SFDX_INTEGRATION_URL.txt -s -a integration
+        run: sf auth:sfdxurl:store -f SF_INTEGRATION_URL.txt -s -a integration
 
       - name: Create delta packages
         run: |
           mkdir changed-sources
-          sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
+          sf sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
 
       - name: Set correct environment variables
         run: |
@@ -64,7 +64,7 @@ jobs:
       - name: Scan code
         run: |
           cd changed-sources
-          sfdx scanner:run --format sarif --target './**/*.cls' --category "Design,Best Practices,Performance" --outfile 'apexScanResults.sarif'
+          sf scanner:run --format sarif --target './**/*.cls' --category "Design,Best Practices,Performance" --outfile 'apexScanResults.sarif'
           cd ..
 
       - name: Upload SARIF file
@@ -75,10 +75,10 @@ jobs:
       - name: Deploy delta changes
         run: |
           if [ "${{ env.APEX_TESTS }}" == "all" ]; then
-            sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunLocalTests --json;
+            sf force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunLocalTests --json;
           else
-            sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunSpecifiedTests --runtests ${{ env.APEX_TESTS }} --json;
+            sf force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunSpecifiedTests --runtests ${{ env.APEX_TESTS }} --json;
           fi
 
       - name: Cleanup temporary files
-        run: rm -f pr_body.txt testsToRun.txt SFDX_INTEGRATION_URL.txt
+        run: rm -f pr_body.txt testsToRun.txt SF_INTEGRATION_URL.txt
