@@ -28,8 +28,6 @@ jobs:
         run: |
           npm install sfdx-cli --global
           sfdx version
-          export SF_LAZY_LOAD_MODULES=true
-          export SF_DISABLE_AUTOUPDATE=true
           echo y | sfdx plugins:install sfdx-git-delta @salesforce/sfdx-scanner
 
       - name: Read PR Body
@@ -52,6 +50,11 @@ jobs:
           mkdir changed-sources
           sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
 
+      - name: Set correct environment variables
+        run: |
+          export SF_LAZY_LOAD_MODULES=true
+          export SF_DISABLE_AUTOUPDATE=true
+          
       - name: Scan code
         run: |
           cd changed-sources
