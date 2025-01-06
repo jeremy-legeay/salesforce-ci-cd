@@ -28,12 +28,7 @@ jobs:
         run: |
           npm install sfdx-cli --global
           sfdx version
-          sfdx plugins:install sfdx-git-delta
-          npm update @salesforce/sfdx-scanner
-
-      - name: Set Node.js flags for dynamic import
-        run: |
-          export NODE_OPTIONS=--experimental-specifier-resolution=node
+          echo y | sfdx plugins:install sfdx-git-delta
 
       - name: Clear cache and install sfdx scanner plugin
         run: |
@@ -64,6 +59,7 @@ jobs:
         run: |
           echo "SF_LAZY_LOAD_MODULES=true" >> $GITHUB_ENV
           echo "SF_DISABLE_AUTOUPDATE=true" >> $GITHUB_ENV
+          echo "SF_AUTOUPDATE_DISABLE=true" >> $GITHUB_ENV
 
       - name: Scan code
         run: |
