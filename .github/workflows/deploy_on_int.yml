@@ -24,14 +24,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Salesforce CLI and plugins
+      # Install Salesforce CLI
+      - name: 'Install Salesforce CLI'
         run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
-          mkdir ~/sfdx
-          tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
-          echo "$HOME/sfdx/bin" >> $GITHUB_PATH
-          export PATH=$PATH:$HOME/sfdx/bin
-          sfdx version
+            npm install sfdx-cli --global
+            sfdx version
 
       - name: Read PR Body
         env:
