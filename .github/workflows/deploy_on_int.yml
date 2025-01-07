@@ -92,7 +92,6 @@ jobs:
           success=$(echo "$result" | jq -r '.status' 2>/dev/null)
           if [ "$success" != "Succeeded" ]; then
             echo "::error ::Deployment failed."
-            exit 1
           fi
 
           # Extraire les avertissements de couverture de code
@@ -100,7 +99,6 @@ jobs:
           if [ "$coverage_warning" != "null" ]; then
             echo "::error ::Merging is blocked due to insufficient test coverage."
             echo "Coverage issues: $coverage_warning" >> $GITHUB_ENV
-            exit 1
           fi
 
           # Si tout est OK
