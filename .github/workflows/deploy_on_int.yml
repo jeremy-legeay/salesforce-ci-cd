@@ -68,16 +68,16 @@ jobs:
           cd ..
 
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: changed-sources/apexScanResults.sarif
 
       - name: Deploy delta changes
         run: |
           if [ "${{ env.APEX_TESTS }}" == "all" ]; then
-            sf force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunLocalTests --json;
+            sf deploy metadata -d "changed-sources/force-app" --check-only --test-level RunLocalTests --json;
           else
-            sf force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunSpecifiedTests --runtests ${{ env.APEX_TESTS }} --json;
+            sf deploy metadata -d "changed-sources/force-app" --check-only --test-level RunSpecifiedTests --runtests ${{ env.APEX_TESTS }} --json;
           fi
 
       - name: Cleanup temporary files
