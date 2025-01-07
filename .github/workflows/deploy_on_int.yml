@@ -75,6 +75,10 @@ jobs:
       - name: Deploy delta changes
         run: |
           echo "::error::This is a test error message"
+          echo "::error This is a test error message"
+          echo "::error file=deploy.sh,line=1::This is a test error message"
+          echo "::error file=deploy.sh,line=12::Deployment failed: $error_message"
+          echo "::warning file=deploy.sh,line=20::Code Coverage Issue: $warning"
           if [ -z "${APEX_TESTS}" ]; then
             # Pas de tests spécifiés
             result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json 2>&1)
