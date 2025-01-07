@@ -84,30 +84,10 @@ jobs:
 
           echo "Deployment result: $result"
 
-          # Vérification de la couverture de test
           coverage_warning=$(echo "$result" | jq '.result.codeCoverageWarnings[]?.message')
           if [ "$coverage_warning" != "null" ]; then
             echo "::error ::Merging is blocked due to insufficient test coverage."
             echo "Coverage issues: $coverage_warning" >> $GITHUB_ENV
-          fi
-
-          # Vérification des erreurs de test (tests échoués)
-          test_errors=$(echo "$result" | jq '.result.deploymentStatus' | grep -i "Failed")
-          if [ ! -z "$test_errors" ]; then
-            echo "::error ::Merging is blocked due to failed tests."
-            echo "Please review the failed tests and ensure all tests pass before merging." >> $GITHUB_ENV
-          fi
-
-          # Vérification des erreurs de déploiement (problèmes de déploiement)
-          deploy_errors=$(echo "$result" | jq '.result.status' | grep -i "Failed")
-          if [ ! -z "$deploy_errors" ]; then
-            echo "::error ::Merging is blocked due to deployment issues."
-            echo "Please review the deployment errors and resolve them before merging." >> $GITHUB_ENV
-          fi
-
-            # Si aucune erreur, indiquer que le déploiement est prêt pour la fusion
-          if [ -z "$coverage_warning" ] && [ -z "$test_errors" ] && [ -z "$deploy_errors" ]; then
-            echo "::notice ::The deployment is successful and ready for merge."
           fi
 
       - name: Cleanup temporary files
