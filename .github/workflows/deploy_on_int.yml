@@ -84,7 +84,7 @@ jobs:
 
           echo "Deployment result: $result"
 
-          coverage_warning=$(echo "$result" | jq '.result.codeCoverageWarnings[]?.message')
+          coverage_warning=$(echo "$result" | jq '.result.codeCoverageWarnings')
           if [ "$coverage_warning" != "null" ]; then
             echo "::error ::Merging is blocked due to insufficient test coverage."
             echo "Coverage issues: $coverage_warning" >> $GITHUB_ENV
