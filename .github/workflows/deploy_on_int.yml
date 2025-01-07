@@ -74,7 +74,9 @@ jobs:
 
       - name: Deploy delta changes
         run: |
-          if [ "${{ env.APEX_TESTS }}" == "all" ]; then
+          if [ -z "${{ env.APEX_TESTS }}" ]; then
+            sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json;
+          elif [ "${{ env.APEX_TESTS }}" == "all" ]; then
             sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json;
           else
             sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunSpecifiedTests --runtests ${{ env.APEX_TESTS }} --json;
