@@ -74,21 +74,39 @@ jobs:
 
       - name: Deploy delta changes
         run: |
-          if [ -z "${{ env.APEX_TESTS }}" ]; then
-            result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json);
-          elif [ "${{ env.APEX_TESTS }}" == "all" ]; then
-            result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json);
+          if [ -z "${APEX_TESTS}" ]; then
+            # Pas de tests spécifiés
+            result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json 2>&1)
+          elif [ "${APEX_TESTS}" == "all" ]; then
+            # Exécuter tous les tests locaux
+            result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json 2>&1)
           else
-            result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunSpecifiedTests --runtests ${{ env.APEX_TESTS }} --json);
+            # Exécuter des tests spécifiques
+            result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunSpecifiedTests --runtests "${APEX_TESTS}" --json 2>&1)
           fi
 
+          # Afficher le résultat brut
           echo "Deployment result: $result"
 
-          coverage_warning=$(echo "$result" | jq '.result.codeCoverageWarnings')
+          # Vérifier si le déploiement a réussi ou échoué
+          success=$(echo "$result" | jq -r '.status' 2>/dev/null)
+          if [ "$success" != "Succeeded" ]; then
+            echo "::error ::Deployment failed."
+            exit 1
+          fi
+
+          # Extraire les avertissements de couverture de code
+          coverage_warning=$(echo "$result" | jq '.result.codeCoverageWarnings' 2>/dev/null)
           if [ "$coverage_warning" != "null" ]; then
             echo "::error ::Merging is blocked due to insufficient test coverage."
             echo "Coverage issues: $coverage_warning" >> $GITHUB_ENV
+            exit 1
           fi
+
+          # Si tout est OK
+          echo "Deployment check passed without issues."
+
+      
 
       - name: Cleanup temporary files
         run: rm -f pr_body.txt testsToRun.txt SF_INTEGRATION_URL.txt
