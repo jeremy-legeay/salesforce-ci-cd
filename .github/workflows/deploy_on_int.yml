@@ -74,6 +74,7 @@ jobs:
 
       - name: Deploy delta changes
         run: |
+          echo "::error::This is a test error message"
           if [ -z "${APEX_TESTS}" ]; then
             # Pas de tests spécifiés
             result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json 2>&1)
@@ -115,8 +116,7 @@ jobs:
           fi
 
           # Si tout est OK
-          echo "Deployment check passed without issues."
-  
+          echo "Deployment check passed without issues."  
 
       - name: Cleanup temporary files
         run: rm -f pr_body.txt testsToRun.txt SF_INTEGRATION_URL.txt
