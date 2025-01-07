@@ -96,7 +96,9 @@ jobs:
           fi
 
           # Si tout est OK
-          echo "Deployment check passed without issues."      
+          echo "Deployment check passed without issues."   
+          
+          echo "::error::Test"
 
       - name: Cleanup temporary files
         run: rm -f pr_body.txt testsToRun.txt SF_INTEGRATION_URL.txt
