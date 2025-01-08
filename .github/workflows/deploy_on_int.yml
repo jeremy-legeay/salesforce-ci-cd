@@ -75,10 +75,9 @@ jobs:
       - name: Deploy delta changes
         run: |
           
-          sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json
-          
-          result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json)
-          echo "Deployment result: $result"
+          sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json > output.json
+          cat output.json
+          # echo "Deployment result: $result"
           
           # if [ -z "${APEX_TESTS}" ]; then
           #   echo "No tests specified."
