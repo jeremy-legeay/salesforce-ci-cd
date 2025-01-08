@@ -76,6 +76,7 @@ jobs:
         run: |
         
           result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json)
+          echo "Deployment result: $result"
           
           # if [ -z "${APEX_TESTS}" ]; then
           #   echo "No tests specified."
@@ -89,7 +90,7 @@ jobs:
           # fi
 
           # Afficher le résultat brut pour débogage
-          echo "Deployment result: $result"
+          # echo "Deployment result: $result"
 
           # if ! echo "$result" | jq -e . >/dev/null 2>&1; then
           #   echo "::error::Invalid JSON response from deployment command."
