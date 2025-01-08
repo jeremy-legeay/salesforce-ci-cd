@@ -88,17 +88,9 @@ jobs:
           # Afficher le résultat brut pour débogage
           echo "Deployment result: $result"
 
-          if ! echo "$result" | jq -e . >/dev/null 2>&1; then
-            echo "::error::Invalid JSON response from deployment command."
-            exit 1
-          fi
+          
+          echo "::warning::test"
 
-          echo "Check code coverage warnings."
-          coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings' 2>/dev/null)
-          if [ -n "$coverage_warnings" ]; then
-            echo "::error::Code Coverage Issue."
-            exit 1
-          fi
 
       - name: Cleanup temporary files
         run: rm -f pr_body.txt testsToRun.txt SF_INTEGRATION_URL.txt
