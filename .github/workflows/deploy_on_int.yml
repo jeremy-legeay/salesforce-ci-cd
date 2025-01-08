@@ -87,7 +87,6 @@ jobs:
 
           # Afficher le résultat brut pour débogage
           echo "Deployment result:"
-          echo $result
 
       - name: Cleanup temporary files
         run: rm -f pr_body.txt testsToRun.txt SF_INTEGRATION_URL.txt
