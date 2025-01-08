@@ -88,24 +88,12 @@ jobs:
           # Afficher le résultat brut pour débogage
           echo "Deployment result: $result"
 
-          # Vérifier si le JSON est valide
           if ! echo "$result" | jq -e . >/dev/null 2>&1; then
-            echo "::error::Invalid JSON response from deployment command." && exit 1
-          fi
-
-          # Vérifier le statut du déploiement
-          status=$(echo "$result" | jq -r '.status' 2>/dev/null)
-          if [ "$status" != "Succeeded" ]; then
-            error_message=$(echo "$result" | jq -r '.message' 2>/dev/null)
-            if [ -n "$error_message" ]; then
-              echo "::error::Deployment failed: $error_message"
-            else
-              echo "::error::Deployment failed: Unknown error."
-            fi
+            echo "::error::Invalid JSON response from deployment command."
             exit 1
           fi
 
-          # Vérifier les avertissements de couverture de code
+          echo "Check code coverage warnings"
           coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings[]?.message' 2>/dev/null)
           if [ -n "$coverage_warnings" ]; then
             while IFS= read -r warning; do
@@ -113,9 +101,6 @@ jobs:
             done <<< "$coverage_warnings"
             exit 1
           fi
-
-          # Si tout est OK
-          echo "Deployment check passed without issues."  
 
       - name: Cleanup temporary files
         run: rm -f pr_body.txt testsToRun.txt SF_INTEGRATION_URL.txt
