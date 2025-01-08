@@ -74,7 +74,7 @@ jobs:
           
       - name: Deploy delta changes
         run: |
-          sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json
+          result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json)
 
           # if [ -z "${APEX_TESTS}" ]; then
           #   echo "No tests specified."
@@ -88,7 +88,7 @@ jobs:
           # fi
 
           # Afficher le résultat brut pour débogage
-          echo "Deployment result:"
+          echo "Deployment result: $result"
 
       - name: Cleanup temporary files
         run: rm -f pr_body.txt testsToRun.txt SF_INTEGRATION_URL.txt
