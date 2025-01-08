@@ -75,22 +75,19 @@ jobs:
       - name: Deploy delta changes
         run: |
           if [ -z "${APEX_TESTS}" ]; then
-            # Pas de tests spécifiés
+            echo "No tests specified."
             result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json 2>&1)
           elif [ "${APEX_TESTS}" == "all" ]; then
-            # Exécuter tous les tests locaux
+            echo "Run all local tests."
             result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json 2>&1)
           else
-            # Exécuter des tests spécifiques
+            echo "Run specific tests."
             result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunSpecifiedTests --runtests "${APEX_TESTS}" --json 2>&1)
           fi
 
           # Afficher le résultat brut pour débogage
-          echo "Deployment result: $result"
-
-          
-          echo "::warning::test"
-
+          echo "Deployment result:"
+          echo $result
 
       - name: Cleanup temporary files
         run: rm -f pr_body.txt testsToRun.txt SF_INTEGRATION_URL.txt
