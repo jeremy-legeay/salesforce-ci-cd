@@ -71,29 +71,9 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: changed-sources/apexScanResults.sarif
-
-      - name: Update Pull Request Check Status
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { context, github } = require('@actions/github');
-      
-            await github.rest.repos.createCommitStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: context.sha,
-              state: 'failure', // 'success', 'failure', 'pending', or 'error'
-              target_url: 'https://github.com/your-org/your-repo/actions', // URL vers vos logs ou documentation
-              description: 'Deployment failed due to invalid metadata. Check the logs for details.',
-              context: 'Deployment Validation'
-            });
-            
+          
       - name: Deploy delta changes
         run: |
-          echo "::error::This is a test error message" 
-          echo "::error file=deploy.sh,line=1::This is a test error message"
-          echo "::error file=deploy.sh,line=12::Deployment failed: $error_message" && exit
-          echo "::warning file=deploy.sh,line=20::Code Coverage Issue: $warning"
           if [ -z "${APEX_TESTS}" ]; then
             # Pas de tests spécifiés
             result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json 2>&1)
