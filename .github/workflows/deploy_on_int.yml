@@ -74,16 +74,18 @@ jobs:
           
       - name: Deploy delta changes
         run: |
-          if [ -z "${APEX_TESTS}" ]; then
-            echo "No tests specified."
-            result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json 2>&1)
-          elif [ "${APEX_TESTS}" == "all" ]; then
-            echo "Run all local tests."
-            result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json 2>&1)
-          else
-            echo "Run specific tests."
-            result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunSpecifiedTests --runtests "${APEX_TESTS}" --json 2>&1)
-          fi
+          sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json
+
+          # if [ -z "${APEX_TESTS}" ]; then
+          #   echo "No tests specified."
+          #   result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level NoTestRun --json 2>&1)
+          # elif [ "${APEX_TESTS}" == "all" ]; then
+          #   echo "Run all local tests."
+          #   result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json 2>&1)
+          # else
+          #   echo "Run specific tests."
+          #   result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunSpecifiedTests --runtests "${APEX_TESTS}" --json 2>&1)
+          # fi
 
           # Afficher le résultat brut pour débogage
           echo "Deployment result:"
