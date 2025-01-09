@@ -74,17 +74,18 @@ jobs:
           
       - name: Deploy delta changes
         run: |
-          # Exécuter la commande Salesforce CLI et capturer le résultat
+          # Exécuter la commande et capturer toutes les sorties
           result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json 2>&1)
 
-          # Vérifier si la commande a réussi
-          if echo "$result" | jq .; then
-            echo "Commande réussie. Résultat JSON capturé."
+          # Vérifier si la commande a échoué
+          if echo "$result" | jq .status 2>/dev/null | grep -q "Failed"; then
+            echo "Erreur détectée dans la commande."
+            echo "$result" | jq .errors
           else
-            echo "Erreur détectée :"
-            echo "$result"
+            echo "Commande réussie."
+            echo "$result" | jq .
           fi
-          
+
           # sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json | jq .
 
           # result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json)
