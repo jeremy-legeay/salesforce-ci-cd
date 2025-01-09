@@ -74,9 +74,11 @@ jobs:
           
       - name: Deploy delta changes
         run: |
-          
-          sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json > output.json
-          cat output.json
+          result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json)
+          echo "result=$result" >> $GITHUB_ENV
+
+          # sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json > output.json
+          # cat output.json
           # echo "Deployment result: $result"
           
           # if [ -z "${APEX_TESTS}" ]; then
