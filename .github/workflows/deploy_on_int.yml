@@ -86,13 +86,23 @@ jobs:
             echo "$result"
           fi
 
-          coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings[]?.message' 2>/dev/null)
+          echo "Check code coverage warnings."
+          coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings' 2>/dev/null)
           if [ -n "$coverage_warnings" ]; then
+            echo "::error::Code coverage issue."
             while IFS= read -r warning; do
-              echo "::error::Code Coverage Issue: $warning"
+              echo "::error::ligne"
             done <<< "$coverage_warnings"
             exit 1
           fi
+
+          # coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings[]?.message' 2>/dev/null)
+          # if [ -n "$coverage_warnings" ]; then
+          #   while IFS= read -r warning; do
+          #     echo "::error::Code Coverage Issue: $warning"
+          #   done <<< "$coverage_warnings"
+          #   exit 1
+          # fi
 
           # echo "Check code coverage warnings."
           # coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings' 2>/dev/null)
