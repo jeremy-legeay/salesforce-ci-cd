@@ -87,22 +87,30 @@ jobs:
           fi
 
           echo "Check code coverage warnings."
-
-          # Extraire les messages de code coverage warnings
-          coverage_warnings=$(echo "$result" | jq -r '.result.runTestResult.codeCoverageWarnings[]?.message' 2>/dev/null)
-
-          # Vérifier si des warnings existent
+          coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings' 2>/dev/null)
           if [ -n "$coverage_warnings" ]; then
-            echo "::error::Code coverage issue detected."
-
-            # Parcourir chaque ligne et afficher le message
+            echo "::error::Code coverage issue."
             while IFS= read -r warning; do
-              echo "::error::$warning"
+              echo "::error::ligne: $warning"
             done <<< "$coverage_warnings"
-
-            # Échec du script
             exit 1
           fi
+
+          # # Extraire les messages de code coverage warnings
+          # coverage_warnings=$(echo "$result" | jq -r '.result.runTestResult.codeCoverageWarnings[]?.message' 2>/dev/null)
+
+          # # Vérifier si des warnings existent
+          # if [ -n "$coverage_warnings" ]; then
+          #   echo "::error::Code coverage issue detected."
+
+          #   # Parcourir chaque ligne et afficher le message
+          #   while IFS= read -r warning; do
+          #     echo "::error::$warning"
+          #   done <<< "$coverage_warnings"
+
+          #   # Échec du script
+          #   exit 1
+          # fi
 
           # coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings[]?.message' 2>/dev/null)
           # if [ -n "$coverage_warnings" ]; then
