@@ -87,7 +87,7 @@ jobs:
           fi
 
           echo "Check code coverage warnings."
-          coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings' 2>/dev/null)
+          coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings[]?.message' 2>/dev/null)
           if [ -n "$coverage_warnings" ]; then
             echo "::error::Code coverage issue."
             while IFS= read -r warning; do
