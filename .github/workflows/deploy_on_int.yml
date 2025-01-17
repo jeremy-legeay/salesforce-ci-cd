@@ -72,65 +72,25 @@ jobs:
         with:
           sarif_file: changed-sources/apexScanResults.sarif
           
-      - name: Deploy delta changes
+      - name: Validate delta changes to the current org
         run: |
-          # Exécuter la commande sans arrêt en cas d'erreur
+          # Execute command without stopping in case of error
           result=$(sf deploy metadata -d "changed-sources/force-app" --dry-run --test-level RunLocalTests --json 2>&1 || true)
 
-          # Vérifier si la sortie est un JSON valide
+          # Check whether the output is a valid JSON
           if echo "$result" | jq . >/dev/null 2>&1; then
-            echo "Sortie JSON valide capturée :"
+            echo "Captured valid JSON output:"
             echo "$result" | jq .
           else
-            echo "Erreur détectée : la sortie n'est pas un JSON valide."
+            echo "Error detected: output is not a valid JSON."
             echo "$result"
           fi
 
           coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings' 2>/dev/null)
-          echo "a: $coverage_warnings"
-
-          echo "Check code coverage warnings."
-          coverage_warnings_a=$(echo "$result" | jq -r '.result.codeCoverageWarnings[]?.message' 2>/dev/null)
-          echo "a: $coverage_warnings_a"
-
           if [ -n "$coverage_warnings" ]; then
-            echo "::error::Code coverage issue."
-            while IFS= read -r warning; do
-              echo "::error::ligne: $warning"
-            done <<< "$coverage_warnings"
+            echo "::error::Code Coverage Failure."
             exit 1
           fi
-
-          # # Extraire les messages de code coverage warnings
-          # coverage_warnings=$(echo "$result" | jq -r '.result.runTestResult.codeCoverageWarnings[]?.message' 2>/dev/null)
-
-          # # Vérifier si des warnings existent
-          # if [ -n "$coverage_warnings" ]; then
-          #   echo "::error::Code coverage issue detected."
-
-          #   # Parcourir chaque ligne et afficher le message
-          #   while IFS= read -r warning; do
-          #     echo "::error::$warning"
-          #   done <<< "$coverage_warnings"
-
-          #   # Échec du script
-          #   exit 1
-          # fi
-
-          # coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings[]?.message' 2>/dev/null)
-          # if [ -n "$coverage_warnings" ]; then
-          #   while IFS= read -r warning; do
-          #     echo "::error::Code Coverage Issue: $warning"
-          #   done <<< "$coverage_warnings"
-          #   exit 1
-          # fi
-
-          # echo "Check code coverage warnings."
-          # coverage_warnings=$(echo "$result" | jq -r '.result.codeCoverageWarnings' 2>/dev/null)
-          # if [ -n "$coverage_warnings" ]; then
-          #   echo "::error::Code coverage issue: $result.codeCoverageWarnings[].message"
-          #   exit 1
-          # fi
 
       - name: Cleanup temporary files
         run: rm -f pr_body.txt testsToRun.txt SF_INTEGRATION_URL.txt
